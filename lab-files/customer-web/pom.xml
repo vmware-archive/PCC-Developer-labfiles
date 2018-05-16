@@ -6,7 +6,7 @@
 	<groupId>io.pivotal.bookshop</groupId>
 	<artifactId>customer-web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>customer-web</name>
 	<description>Customer Web project for PCC client</description>
@@ -75,8 +75,6 @@
 		</repository>
 	</repositories>
 
-	<!-- This should NOT be set as it causes the CF push to not deploy the Tomcat container and necessary code for
-	     PCC to get hooked up for session state caching
 	<build>
 		<plugins>
 			<plugin>
@@ -85,5 +83,4 @@
 			</plugin>
 		</plugins>
 	</build>
-    -->
 </project>
