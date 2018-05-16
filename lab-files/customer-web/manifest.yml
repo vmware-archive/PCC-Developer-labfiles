@@ -1,6 +1,6 @@
 ---
 applications:
-- name: <Specify application name>
-  path: <Specify path to WAR file>
+- name: customer-web
+  path: target/customer-web-0.0.1-SNAPSHOT.war
   services:
-  - <Specify Service name of MySql service to bind>
+  - bookshop-db
