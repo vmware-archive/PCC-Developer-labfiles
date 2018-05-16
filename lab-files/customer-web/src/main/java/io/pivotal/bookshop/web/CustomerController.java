@@ -1,7 +1,7 @@
 package io.pivotal.bookshop.web;
 
-import io.pivotal.bookshop.dao.CustomerRepository;
 import io.pivotal.bookshop.domain.Customer;
+import io.pivotal.bookshop.services.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 
 @Controller
 @SessionAttributes("customer")
 public class CustomerController {
     private Logger logger = LoggerFactory.getLogger("CustomerController");
 
-    private CustomerRepository repo;
+    private CustomerService customerService;
 
     @Autowired
-    public CustomerController(CustomerRepository repository) {
-        this.repo= repository;
+    public CustomerController(CustomerService custService) {
+        this.customerService= custService;
     }
 
     @GetMapping("/")
@@ -46,15 +44,23 @@ public class CustomerController {
     public String changeCustomer(@RequestParam String customerNumber, Model model) {
         logger.info("In changeCustomer() processing customer number: " + customerNumber);
 
-        Optional<Customer> c = repo.findById(new Integer(customerNumber));
-        if (c.isPresent() ) {
-            logger.info("Loaded customer: " + c.get());
-            model.addAttribute("customer", c.get());
+        Customer c = customerService.loadCustomer(customerNumber);
+        if (c != null) {
+            model.addAttribute("customer", c);
             return "displayCustomer";
         } else {
             logger.info("Customer not found for customerNumber: " + customerNumber);
             return "enterCustomer";
         }
     }
+
+/*
+    private Customer loadCustomer(String customerNumber) {
+        //Customer cust = customers.get(new Integer(customerNumber));
+        Customer cust = customerDao.getCustomer(new Integer(customerNumber));
+        logger.info("Loaded customer: " + cust);
+        return cust;
+    }
+    */
 
 }
