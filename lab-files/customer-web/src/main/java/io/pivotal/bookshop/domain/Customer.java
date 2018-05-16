@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class Customer implements java.io.Serializable
 {
 
-	  
 	private Integer customerNumber;
 		
 	private String firstName;

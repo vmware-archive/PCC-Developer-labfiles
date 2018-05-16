@@ -1,6 +1,6 @@
 package io.pivotal.bookshop.web;
 
-import io.pivotal.bookshop.dao.CustomerJdbcDao;
+import io.pivotal.bookshop.dao.CustomerCacheDao;
 import io.pivotal.bookshop.domain.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,18 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 
 @Controller
 @SessionAttributes("customer")
 public class CustomerController {
     private Logger logger = LoggerFactory.getLogger("CustomerController");
 
-    private CustomerJdbcDao customerDao;
+    private CustomerCacheDao dao;
 
     @Autowired
-    public CustomerController(CustomerJdbcDao dao) {
-        this.customerDao = dao;
+    public CustomerController(CustomerCacheDao dao) {
+        this.dao= dao;
     }
 
     @GetMapping("/")
@@ -42,26 +41,18 @@ public class CustomerController {
     }
 
     @PostMapping("/changeCustomer")
-    public String changeCustomer(@RequestParam String customerNumber, @CookieValue("JSESSIONID") String sessionId, Model model) {
+    public String changeCustomer(@RequestParam String customerNumber, Model model) {
         logger.info("In changeCustomer() processing customer number: " + customerNumber);
-        logger.info("JSESSIONID = " + sessionId);
 
-        Customer c = loadCustomer(customerNumber);
+        Customer c = dao.findById(new Integer(customerNumber));
         if (c != null) {
-            model.addAttribute("customer", loadCustomer(customerNumber));
-            model.addAttribute("sessionId", sessionId);
+            logger.info("Loaded customer: " + c);
+            model.addAttribute("customer", c);
             return "displayCustomer";
         } else {
             logger.info("Customer not found for customerNumber: " + customerNumber);
             return "enterCustomer";
         }
-    }
-
-    private Customer loadCustomer(String customerNumber) {
-        //Customer cust = customers.get(new Integer(customerNumber));
-        Customer cust = customerDao.getCustomer(new Integer(customerNumber));
-        logger.info("Loaded customer: " + cust);
-        return cust;
     }
 
 }
