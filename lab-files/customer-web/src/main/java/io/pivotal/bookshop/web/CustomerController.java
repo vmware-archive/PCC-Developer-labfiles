@@ -1,6 +1,6 @@
 package io.pivotal.bookshop.web;
 
-import io.pivotal.bookshop.dao.CustomerCacheDao;
+import io.pivotal.bookshop.dao.CustomerRepository;
 import io.pivotal.bookshop.domain.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,17 +9,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 @Controller
 @SessionAttributes("customer")
 public class CustomerController {
     private Logger logger = LoggerFactory.getLogger("CustomerController");
 
-    private CustomerCacheDao dao;
+    private CustomerRepository repo;
 
     @Autowired
-    public CustomerController(CustomerCacheDao dao) {
-        this.dao= dao;
+    public CustomerController(CustomerRepository repository) {
+        this.repo= repository;
     }
 
     @GetMapping("/")
@@ -44,10 +46,10 @@ public class CustomerController {
     public String changeCustomer(@RequestParam String customerNumber, Model model) {
         logger.info("In changeCustomer() processing customer number: " + customerNumber);
 
-        Customer c = dao.findById(new Integer(customerNumber));
-        if (c != null) {
-            logger.info("Loaded customer: " + c);
-            model.addAttribute("customer", c);
+        Optional<Customer> c = repo.findById(new Integer(customerNumber));
+        if (c.isPresent() ) {
+            logger.info("Loaded customer: " + c.get());
+            model.addAttribute("customer", c.get());
             return "displayCustomer";
         } else {
             logger.info("Customer not found for customerNumber: " + customerNumber);

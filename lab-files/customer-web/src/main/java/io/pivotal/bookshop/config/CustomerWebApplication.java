@@ -1,7 +1,6 @@
 package io.pivotal.bookshop.config;
 
-import io.pivotal.bookshop.dao.CustomerCacheDao;
-import io.pivotal.bookshop.dao.CustomerCacheDaoImpl;
+import io.pivotal.bookshop.dao.CustomerRepository;
 import io.pivotal.bookshop.domain.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +23,10 @@ public class CustomerWebApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger("CustomerWebApplication");
         ApplicationContext context = SpringApplication.run(CustomerWebApplication.class, args);
-        CustomerCacheDao dao = context.getBean(CustomerCacheDao.class);
-        dao.save(new Customer(1001, "Hatty", "Carsberg", "34102"));
-        dao.save(new Customer(1002, "Conrado", "Carvill", "76129"));
-        dao.save(new Customer(1003, "Jasun", "Barwood", "66606"));
+        CustomerRepository repo = context.getBean(CustomerRepository.class);
+        repo.save(new Customer(1001, "Hatty", "Carsberg", "34102"));
+        repo.save(new Customer(1002, "Conrado", "Carvill", "76129"));
+        repo.save(new Customer(1003, "Jasun", "Barwood", "66606"));
 
     }
 }
