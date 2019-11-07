@@ -7,9 +7,7 @@ import io.pivotal.bookshop.domain.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +85,6 @@ public class DataService {
      * @return A HashMap of the columns and values for the given customer or an empty HashMap on failure
      *
      */
-    @Cacheable(value = "Books")
     public BookMaster getBookById(int id) {
         try {
             return bookDao.findById(id);
@@ -105,7 +102,6 @@ public class DataService {
      * @return The created/updated book
      *
      */
-    @CachePut(value = "Books", key = "#result.itemNumber")
     public BookMaster saveBook(BookMaster book) {
         logger.info("Saving book: {}", book);
         bookDao.save(book);
@@ -116,7 +112,6 @@ public class DataService {
      * Delete the book specified by the
      * @param bookToDelete
      */
-    @CacheEvict(value = "Books", key="#bookToDelete.itemNumber")
     public void removeBook(BookMaster bookToDelete) {
         logger.info("Removing book for key: {}", bookToDelete.getItemNumber());
         if (bookDao.bookExists(bookToDelete)) {
