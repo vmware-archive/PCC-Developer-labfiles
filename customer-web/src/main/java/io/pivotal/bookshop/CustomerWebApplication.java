@@ -25,6 +25,7 @@ public class CustomerWebApplication extends SpringBootServletInitializer {
 		SpringApplication.run(CustomerWebApplication.class, args);
 	}
 
+	@Bean
 	public CommandLineRunner commandLineRunner(CustomerDao customerCacheDao) {
 		return args -> {
 			customerCacheDao.save(new Customer(1001, "Hatty", "Carsberg", "34102"));

@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +29,7 @@ public class DataService {
 
 
     @Autowired
-    public DataService(  BookDao bookDao, CustomerDao customerDao) {
+    public DataService(  BookDao bookDao, @Qualifier("customerCacheDao") CustomerDao customerDao) {
         this.bookDao = bookDao;
         this.customerDao = customerDao;
     }
@@ -85,6 +88,7 @@ public class DataService {
      * @return A HashMap of the columns and values for the given customer or an empty HashMap on failure
      *
      */
+    @Cacheable(cacheNames = "Books", key="#result.itemNumber")
     public BookMaster getBookById(int id) {
         try {
             return bookDao.findById(id);
@@ -102,6 +106,7 @@ public class DataService {
      * @return The created/updated book
      *
      */
+    @CachePut(cacheNames = "Books", key="#book.itemNumber")
     public BookMaster saveBook(BookMaster book) {
         logger.info("Saving book: {}", book);
         bookDao.save(book);
@@ -112,6 +117,7 @@ public class DataService {
      * Delete the book specified by the
      * @param bookToDelete
      */
+    @CacheEvict(cacheNames = "Books", key="#bookToDelete.itemNumber")
     public void removeBook(BookMaster bookToDelete) {
         logger.info("Removing book for key: {}", bookToDelete.getItemNumber());
         if (bookDao.bookExists(bookToDelete)) {

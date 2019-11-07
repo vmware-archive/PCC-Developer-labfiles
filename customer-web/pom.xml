@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
-    	</dependency>
+		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -61,10 +61,16 @@
 		</dependency>
 
 
-		<!-- TODO: Add Spring Boot Data GemFire dependency -->
-
-		<!-- TODO: Add Spring Cache Dependency -->
-
+		<!-- Spring Boot Data GemFire dependency -->
+		<dependency>
+			<groupId>org.springframework.geode</groupId>
+			<artifactId>spring-gemfire-starter</artifactId>
+			<version>${sbdg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
 
 	</dependencies>
 	<repositories>
@@ -97,6 +103,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>
 </project>
