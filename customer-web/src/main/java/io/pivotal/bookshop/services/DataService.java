@@ -87,7 +87,7 @@ public class DataService {
      * @return A HashMap of the columns and values for the given customer or an empty HashMap on failure
      *
      */
-    // TODO: Add caching annotation to support first checking cache beore calling the method
+    @Cacheable(value = "Books")
     public BookMaster getBookById(int id) {
         try {
             return bookDao.findById(id);
@@ -105,7 +105,7 @@ public class DataService {
      * @return The created/updated book
      *
      */
-    // TODO: Add caching annotation to store saved book (use the returned book to specify the key)
+    @CachePut(value = "Books", key = "#result.itemNumber")
     public BookMaster saveBook(BookMaster book) {
         logger.info("Saving book: {}", book);
         bookDao.save(book);
@@ -116,7 +116,7 @@ public class DataService {
      * Delete the book specified by the
      * @param bookToDelete
      */
-    // TODO: Add caching annotation to clear the entry when book is deleted
+    @CacheEvict(value = "Books", key="#bookToDelete.itemNumber")
     public void removeBook(BookMaster bookToDelete) {
         logger.info("Removing book for key: {}", bookToDelete.getItemNumber());
         if (bookDao.bookExists(bookToDelete)) {

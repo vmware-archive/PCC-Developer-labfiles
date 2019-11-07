@@ -61,11 +61,16 @@
 		</dependency>
 
 
-		<!-- Add the Spring Boot Data GemFire dependency - use the property set above for the version -->
-
-		<!-- Add dependency for general Caching support -->
-
-		<!-- ========================================== -->
+		<!-- Spring Boot Data GemFire dependency -->
+		<dependency>
+			<groupId>org.springframework.geode</groupId>
+			<artifactId>spring-gemfire-starter</artifactId>
+			<version>${sbdg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
 
 	</dependencies>
 	<repositories>
