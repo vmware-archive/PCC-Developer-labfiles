@@ -67,6 +67,7 @@
 			<artifactId>spring-gemfire-starter</artifactId>
 			<version>${sbdg.version}</version>
 		</dependency>
+		<!-- Spring Cache abstraction -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>

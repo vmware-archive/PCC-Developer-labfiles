@@ -2,18 +2,19 @@ package io.pivotal.bookshop.services;
 
 import io.pivotal.bookshop.dao.BookDao;
 import io.pivotal.bookshop.dao.CustomerDao;
+import io.pivotal.bookshop.dao.CustomerRepository;
 import io.pivotal.bookshop.domain.BookMaster;
 import io.pivotal.bookshop.domain.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +26,15 @@ public class DataService {
 
     private Logger logger = LoggerFactory.getLogger("CustomerService");
     private BookDao bookDao;
-    private CustomerDao customerDao;
+    private CustomerRepository customerRepo;
+
+    //private CustomerDao customerDao;
 
 
     @Autowired
-    public DataService(  BookDao bookDao, @Qualifier("customerCacheDao") CustomerDao customerDao) {
+    public DataService(  BookDao bookDao, CustomerRepository customerRepo) {
         this.bookDao = bookDao;
-        this.customerDao = customerDao;
+        this.customerRepo = customerRepo;
     }
 
     /**
@@ -41,7 +44,7 @@ public class DataService {
      */
     public boolean isDbInitialized() {
         try {
-            return (customerDao.countCustomers() > 0 && bookDao.countBooks() > 0);
+            return (customerRepo.count() > 0 && bookDao.countBooks() > 0);
         } catch (DataAccessException dae) {
             logger.info("Exception thrown on query: " + dae);
             return false;
@@ -51,7 +54,7 @@ public class DataService {
     // ================================= Customer Operations ================================
 
     public List<Customer> listCustomers() {
-        return customerDao.listCustomers(10);
+      return (List<Customer>) customerRepo.findAll();
     }
 
     /**
@@ -63,7 +66,7 @@ public class DataService {
      */
     public Customer getCustomerById(int id) {
         try {
-            return customerDao.findById(id);
+            return customerRepo.findById(id).get();
         } catch (DataAccessException dae) {
             logger.info("Exception thrown on query: " + dae);
             return null;
@@ -88,7 +91,7 @@ public class DataService {
      * @return A HashMap of the columns and values for the given customer or an empty HashMap on failure
      *
      */
-    @Cacheable(cacheNames = "Books", key="#result.itemNumber")
+    @Cacheable(value = "Books")
     public BookMaster getBookById(int id) {
         try {
             return bookDao.findById(id);
@@ -106,7 +109,7 @@ public class DataService {
      * @return The created/updated book
      *
      */
-    @CachePut(cacheNames = "Books", key="#book.itemNumber")
+    @CachePut(value = "Books", key = "#result.itemNumber")
     public BookMaster saveBook(BookMaster book) {
         logger.info("Saving book: {}", book);
         bookDao.save(book);
@@ -117,7 +120,7 @@ public class DataService {
      * Delete the book specified by the
      * @param bookToDelete
      */
-    @CacheEvict(cacheNames = "Books", key="#bookToDelete.itemNumber")
+    @CacheEvict(value = "Books", key="#bookToDelete.itemNumber")
     public void removeBook(BookMaster bookToDelete) {
         logger.info("Removing book for key: {}", bookToDelete.getItemNumber());
         if (bookDao.bookExists(bookToDelete)) {

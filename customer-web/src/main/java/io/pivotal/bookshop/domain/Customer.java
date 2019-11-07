@@ -1,11 +1,16 @@
 package io.pivotal.bookshop.domain;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.gemfire.mapping.annotation.Region;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@Region(name = "Customer")
 public class Customer implements Serializable
 {
 
+    @Id
     private Integer customerNumber;
 
     private String firstName;
@@ -18,6 +23,8 @@ public class Customer implements Serializable
 
     private ArrayList<Integer> myBookOrders;
 
+    public Customer() {}
+
     public void setTelephoneNumber(String telephoneNumber) {
         this.telephoneNumber = telephoneNumber;
     }
@@ -25,8 +32,6 @@ public class Customer implements Serializable
     public String getTelephoneNumber() {
         return this.telephoneNumber;
     }
-
-    public Customer() {}
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Customer (int customerNumber, String firstName, String lastName)
@@ -168,9 +173,17 @@ public class Customer implements Serializable
     @Override
     public String toString()
     {
-        return "Customer [customerNumber=" + customerNumber
-                + ", firstName=" + firstName + ", lastName=" + lastName
-                + ", postalCode=" + getPrimaryAddress().getPostalCode() + "]";
+        StringBuffer str = new StringBuffer("Customer [customerNumber=");
+        str.append(customerNumber);
+        str.append(", firstName=");
+        str.append(firstName);
+        str.append(", lastName=");
+        str.append(lastName);
+        str.append(", postalCode=");
+        str.append((primaryAddress == null) ? "[null]" : primaryAddress.getPostalCode());
+
+        return str.toString();
+
     }
 
     public Address getPrimaryAddress()

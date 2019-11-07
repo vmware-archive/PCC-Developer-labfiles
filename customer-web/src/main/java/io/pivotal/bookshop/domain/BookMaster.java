@@ -1,11 +1,14 @@
 package io.pivotal.bookshop.domain;
 
-import java.io.Serializable;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.gemfire.mapping.annotation.Region;
 
-public class BookMaster implements Serializable
+@Region("BookMaster")
+public class BookMaster
 {
 
-    private int itemNumber;
+@Id
+private int itemNumber;
     private String description;
     private float retailCost;
     private int yearPublished;
