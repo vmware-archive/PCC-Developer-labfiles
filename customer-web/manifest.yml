@@ -1,6 +1,7 @@
 ---
 applications:
-- name: customer-web-<space-name>
+- name: customer-web-<space name>
   path: target/customer-web-0.0.1-SNAPSHOT.war
   services:
     - bookshop-db
+    - session-cache
